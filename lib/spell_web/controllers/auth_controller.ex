@@ -2,11 +2,7 @@ defmodule SpellWeb.AuthController do
   use SpellWeb, :controller
   plug Ueberauth
 
-  alias SpellWeb.User
-  alias Spell.Repo
-
   def new(%{assigns: %{ueberauth_auth: auth}} = conn, _params) do
-    IO.puts inspect(auth)
     user_params = %{
       token: auth.credentials.token,
       first_name: auth.info.first_name,
@@ -23,11 +19,19 @@ defmodule SpellWeb.AuthController do
     case insert_or_update(changeset) do
       {:ok, user} ->
         conn
-        |> put_session(:user_id, user.id)
+        |> login(user)
+        |> render("user.json", user: user)
       {:error, reason} ->
         conn
         |> render("500.json", reason: reason)
     end
+  end
+
+  def login(conn, user) do
+    conn
+    |> assign(:current_user, user)
+    |> put_session(:user_id, user.id)
+    |> configure_session(renew: true)
   end
 
   def insert_or_update(changeset) do

@@ -31,8 +31,11 @@ defmodule SpellWeb do
     quote do
       use Phoenix.Controller, namespace: SpellWeb
       import Plug.Conn
-      import SpellWeb.Router.Helpers
+      alias SpellWeb.Router.Helpers, as: Routes
       import SpellWeb.Gettext
+
+      alias SpellWeb.User
+      alias Spell.Repo
     end
   end
 
@@ -55,6 +58,8 @@ defmodule SpellWeb do
       use Phoenix.Router
       import Plug.Conn
       import Phoenix.Controller
+
+      import SpellWeb.Authenticator, only: [authenticate_user: 2]
     end
   end
 

@@ -1,6 +1,11 @@
 defmodule SpellWeb.User do
   use SpellWeb, :model
 
+  @derive {Poison.Encoder, only: [
+    :first_name, 
+    :last_name, 
+    :email
+  ]}
   schema "users" do
     field :first_name, :string
     field :last_name, :string
